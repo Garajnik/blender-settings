@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="mf_obj" label="MObj">
+    <memberTool name="scale_100"/>
+    <memberTool name="tool_2"/>
+    <memberTool name="goz_fix"/>
+    <memberTool name="recook1"/>
+    <memberTool name="increase_fov"/>
+    <memberTool name="decrease_fov"/>
+  </toolshelf>
+
+  <tool name="scale_100" label="Scale100" icon="SOP_xform">
+    <script scriptType="python"><![CDATA[sel_nodes = hou.selectedNodes()
+out_obj = hou.node('/out')
+cur_obj = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).pwd()
+
+if cur_obj.childTypeCategory().name() == 'Object' and sel_nodes:
+    choice = hou.ui.displayMessage("Scale?", buttons=("100", "0.01"))
+
+    for obj_node in sel_nodes:
+#        for sop_node in obj_node.children():
+        sop_node = obj_node.displayNode()
+
+        trans_node = sop_node.createOutputNode("xform")
+        
+        if choice == 1:
+            trans_node.parm('scale').set(0.01)
+            poses = obj_node.parmTuple('t').eval()
+
+            obj_node.parm('tx').set(poses[0] * 0.01)
+            obj_node.parm('ty').set(poses[1] * 0.01)
+            obj_node.parm('tz').set(poses[2] * 0.01)
+        else:
+            trans_node.parm('scale').set(100)
+
+            poses = obj_node.parmTuple('t').eval()
+
+            obj_node.parm('tx').set(poses[0] * 100)
+            obj_node.parm('ty').set(poses[1] * 100)
+            obj_node.parm('tz').set(poses[2] * 100)
+
+        trans_node.moveToGoodPosition()
+        trans_node.setDisplayFlag(True)
+        trans_node.setRenderFlag(True)
+else:
+    msg = 'Select Object Nodes!'
+    hou.ui.displayMessage(msg)]]></script>
+  </tool>
+
+  <tool name="tool_2" label="ApplyTransform" icon="SOP_xform">
+    <script scriptType="python"><![CDATA[sel_nodes = hou.selectedNodes()
+out_obj = hou.node('/out')
+cur_obj = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).pwd()
+
+if cur_obj.childTypeCategory().name() == 'Object' and sel_nodes:
+    choice = hou.ui.displayMessage("Apply Transform?", buttons=("All", "Position", "Rotation", "Scale", "Cancel"))
+
+    if choice != 4:
+
+        for obj_node in sel_nodes:
+            sop_node = obj_node.displayNode()
+
+            trans_node = sop_node.createOutputNode("xform")
+
+            poses = obj_node.parmTuple('t').eval()
+            rots = obj_node.parmTuple('r').eval()
+            scales = obj_node.parmTuple('s').eval()
+            uni_scales = obj_node.parm('scale').eval()
+            piv_poses = obj_node.parmTuple('p').eval()
+            piv_rots = obj_node.parmTuple('pr').eval()
+
+            if choice == 0 or choice == 1:
+                new_pos = (poses[0] + piv_poses[0], poses[1] + piv_poses[1], poses[2] + piv_poses[2])
+                trans_node.parmTuple('t').set(new_pos)
+            if choice == 0 or choice == 2:
+                new_rot = (rots[0] + piv_rots[0], rots[1] + piv_rots[1], rots[2] + piv_rots[2])
+                trans_node.parmTuple('r').set(new_rot)
+            if choice == 0 or choice == 3:
+                trans_node.parmTuple('s').set(scales)
+                trans_node.parm('scale').set(uni_scales)
+
+            if choice == 0 or choice == 1:
+                obj_node.parmTuple('t').set((0, 0, 0))
+                obj_node.parmTuple('p').set((0, 0, 0))
+            if choice == 0 or choice == 2:
+                obj_node.parmTuple('r').set((0, 0, 0))
+                obj_node.parmTuple('pr').set((0, 0, 0))
+            if choice == 0 or choice == 3:
+                obj_node.parmTuple('s').set((1, 1, 1))
+                obj_node.parm('scale').set(1)
+
+            trans_node.moveToGoodPosition()
+            trans_node.setDisplayFlag(True)
+            trans_node.setRenderFlag(True)
+
+else:
+    msg = 'Select Object Nodes!'
+    hou.ui.displayMessage(msg)]]></script>
+  </tool>
+
+  <tool name="recook" label="Recook" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[for node in hou.node("/obj").allSubChildren():
+    if node.type().name() == 'geo':
+        node.displayNode().cook(force=True)
+        ]]></script>
+  </tool>
+
+  <tool name="recook1" label="Recook" icon="PLASMA_App">
+    <toolMenuContext name="network">
+      <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[for node in hou.node("/obj").allSubChildren():
+    if node.type().name() == 'geo':
+        node.displayNode().cook(force=True)
+        node.cook(force=True)
+        ]]></script>
+  </tool>
+
+  <tool name="goz_fix" label="GoZ_Fix" icon="SOP_xform">
+    <script scriptType="python"><![CDATA[sel_nodes = hou.selectedNodes()
+out_obj = hou.node('/out')
+cur_obj = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).pwd()
+
+if cur_obj.childTypeCategory().name() == 'Object' and sel_nodes:
+
+    for obj_node in sel_nodes:
+        sop_node = obj_node.displayNode()
+
+        trans_node = sop_node.createOutputNode("xform")
+
+        obj_node.parm('rx').set(180)
+
+        trans_node.moveToGoodPosition()
+        trans_node.setDisplayFlag(True)
+        trans_node.setRenderFlag(True)
+else:
+    msg = 'Select Object Nodes!'
+    hou.ui.displayMessage(msg)]]></script>
+  </tool>
+
+  <tool name="increase_fov" label="Increase FOV" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import soptoolutils
+import toolutils
+
+cam = toolutils.sceneViewer().curViewport().defaultCamera()
+#sel_nodes = hou.selectedNodes()
+#geo = viewer.selectGeometry()
+#sel_str = geo.mergedSelectionString()
+#cur_obj = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).pwd()
+
+
+
+cam.setFocalLength(cam.focalLength() + 5)
+print(cam.focalLength())
+]]></script>
+  </tool>
+
+  <tool name="decrease_fov" label="Decrease FOV" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[import soptoolutils
+import toolutils
+
+cam = toolutils.sceneViewer().curViewport().defaultCamera()
+
+cam.setFocalLength(cam.focalLength() - 5)
+print(cam.focalLength())]]></script>
+  </tool>
+</shelfDocument>

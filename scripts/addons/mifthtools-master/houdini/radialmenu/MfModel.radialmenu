@@ -1,0 +1,238 @@
+[
+	"fileversion","17.0.487",
+	"name","MfModel",
+	"categories","Modeling",
+	"submenu",["submenu",
+		"label","MfModeling",
+		"top",["submenu",
+			"label","Generate",
+			"top",["submenu",
+				"label","HardGun",
+				"top",["script",
+					"label","Primitives",
+					"icon","SOP_box",
+					"script","radialmenu.runShelfTool(kwargs, 'hard_gun_prim')"
+				],
+				"top_left",["script",
+					"label","Merge",
+					"icon","SOP_merge",
+					"script","radialmenu.runShelfTool(kwargs, 'hard_gun_merge')"
+				],
+				"left",["script",
+					"label","Extract",
+					"icon","SHELF_extract_object",
+					"script","radialmenu.runShelfTool(kwargs, 'hard_gun_extract_to_object')"
+				],
+				"right",["script",
+					"label","Bevel Setup",
+					"icon","SOP_polybevel",
+					"script","radialmenu.runShelfTool(kwargs, 'hard_gun_bevel_setup')"
+				],
+				"top_right",["script",
+					"label","Boolean",
+					"icon","SOP_boolean-2.0",
+					"script","radialmenu.runShelfTool(kwargs, 'hard_gun_bool')"
+				]
+			],
+			"top_left",["submenu",
+				"label","Create",
+				"top",["script",
+					"label","Box",
+					"icon","SOP_box",
+					"script","radialmenu.runShelfTool(kwargs, 'geometry_box')"
+				],
+				"top_left",["script",
+					"label","Grid",
+					"icon","SOP_grid",
+					"script","radialmenu.runShelfTool(kwargs, 'geometry_grid')"
+				],
+				"left",["script",
+					"label","Circle",
+					"icon","SOP_circle",
+					"script","radialmenu.runShelfTool(kwargs, 'geometry_circle')"
+				],
+				"bottom_left",["script",
+					"label","Curve",
+					"icon","SOP_curve",
+					"script","radialmenu.runShelfTool(kwargs, 'sop_curve')"
+				],
+				"right",["script",
+					"label","Tube",
+					"icon","SOP_tube",
+					"script","radialmenu.runShelfTool(kwargs, 'geometry_tube')"
+				],
+				"top_right",["script",
+					"label","Sphere",
+					"icon","SOP_sphere",
+					"script","radialmenu.runShelfTool(kwargs, 'geometry_sphere')"
+				]
+			],
+			"right",["script",
+				"label","Simple Pipe",
+				"icon","PLASMA_App",
+				"script","import soptoolutils\n\nnode = soptoolutils.genericTool(kwargs, 'mifth_simple_pipe')  "
+			]
+		],
+		"top_left",["submenu",
+			"label","Utils",
+			"top_right",["submenu",
+				"label","Transform",
+				"top",["script",
+					"label","Zero_X",
+					"icon","SOP_attribexpression",
+					"script","import soptoolutils\nimport toolutils\n\n#viewer = toolutils.sceneViewer()\n#geos = viewer.selectGeometry()\n#sel_str = geos.mergedSelectionString()\n\n#kwargs['bindgroup'] = sel_str\nnode = soptoolutils.genericTool(kwargs, 'attribexpression')\n\n#node.parm('bindgroup').set(sel_str)\nnode.parm('snippet1').set('set(0, self.y, self.z)')\n#print geos.geometryType()"],
+				
+				"right",["script",
+					"label","Zero_Z",
+					"icon","SOP_attribexpression",
+					"script","import soptoolutils\nimport toolutils\n\nnode = soptoolutils.genericTool(kwargs, 'attribexpression')\n\nnode.parm('snippet1').set('set(self.x, self.y, 0)')\n"
+				],
+				"top_right",["script",
+					"label","Zero_Y",
+					"icon","SOP_attribexpression",
+					"script","import soptoolutils\nimport toolutils\n\nnode = soptoolutils.genericTool(kwargs, 'attribexpression')\n\nnode.parm('snippet1').set('set(self.x, 0, self.z)')\n"
+				]
+			]
+		],
+		"left",["submenu",
+			"label","Model",
+			"top",["script",
+				"label","Faloff",
+				"icon","SOP_edit",
+				"script","radialmenu.runShelfTool(kwargs, 'falloff')"
+			],
+			"top_left",["script",
+				"label","EdgesToFace",
+				"icon","SOP_polycap",
+				"script","radialmenu.runShelfTool(kwargs, 'edges_to_face')"
+			],
+			"left",["script",
+				"label","PolyExtrude",
+				"icon","SOP_polyextrude",
+				"script","radialmenu.runShelfTool(kwargs, 'sop_polyextrude::2.0')"
+			],
+			"bottom_left",["script",
+				"label","SymExtrude",
+				"icon","SOP_polyextrude",
+				"script","radialmenu.runShelfTool(kwargs, 'symmetry_extrude')"
+			],
+			"bottom",["submenu",
+				"label","Bevel",
+				"bottom_left",["script",
+					"label","Bevel 1",
+					"icon","SOP_polybevel-2.0",
+					"script","import soptoolutils\n\nnd = soptoolutils.genericTool(kwargs, 'polybevel')\nnd.parm('beveltype').set(1)"
+				],
+				"bottom",["script",
+					"label","Bevel 2",
+					"icon","SOP_polybevel-2.0",
+					"script","radialmenu.runShelfTool(kwargs, 'sop_polybevel::2.0')"
+				]
+			]
+		],
+		"bottom_left",["submenu",
+			"label","Model2",
+			"top",["script",
+				"label","TransformPrims",
+				"icon","SOP_primitive",
+				"script","radialmenu.runShelfTool(kwargs, 'transform_primitives')"
+			],
+			"top_left",["script",
+				"label","Merge Verts",
+				"icon","SOP_fuse",
+				"script","radialmenu.runShelfTool(kwargs, 'merge_verts')"
+			],
+			"left",["script",
+				"label","Reverse",
+				"icon","SOP_reverse",
+				"script","radialmenu.runShelfTool(kwargs, 'sop_reverse')"
+			],
+			"bottom_left",["script",
+				"label","Group",
+				"icon","SOP_group",
+				"script","radialmenu.runShelfTool(kwargs, 'geo_group')"
+			],
+			"bottom",["script",
+				"label","Edge Collapse",
+				"icon","SOP_edgecollapse",
+				"script","import soptoolutils\nimport toolutils\n\nsoptoolutils.genericTool(kwargs, 'mifth_edge_collapse_plus')"
+			],
+			"bottom_right",["script",
+				"label","Normal",
+				"icon","SOP_normal",
+				"script","import soptoolutils\nimport toolutils\n\nnode = soptoolutils.genericTool(kwargs, 'normal')"
+			],
+			"right",["script",
+				"label","Scale Edges",
+				"icon","SOP_edgeflip",
+				"script","radialmenu.runShelfTool(kwargs, 'scale_edges')"
+			]
+		],
+		"bottom",["submenu",
+			"label","Split",
+			"left",["script",
+				"label","PolySplit",
+				"icon","SOP_polysplit",
+				"script","radialmenu.runShelfTool(kwargs, 'sop_polysplit::2.0')"
+			],
+			"bottom_left",["script",
+				"label","Knife",
+				"icon","SHELF_knife",
+				"script","radialmenu.runShelfTool(kwargs, 'sop_knife')"
+			],
+			"bottom",["script",
+				"label","PolyDraw",
+				"icon","SOP_polydraw",
+				"script","radialmenu.runShelfTool(kwargs, 'sop_polydraw')"
+			],
+			"right",["script",
+				"label","Divide Edges",
+				"icon","SOP_edgedivide",
+				"script","radialmenu.runShelfTool(kwargs, 'divide_edges')"
+			]
+		],
+		"bottom_right",["submenu",
+			"label","Model3",
+			"left",["script",
+				"label","Mirror",
+				"icon","SOP_mirror",
+				"script","radialmenu.runShelfTool(kwargs, 'geometry_mirror')"
+			],
+			"bottom",["submenu",
+				"label","Boolean",
+				"bottom",["script",
+					"label","Boolean",
+					"icon","SOP_boolean",
+					"script","import soptoolutils\n\nnew_node = soptoolutils.addBooleanTool(kwargs)\nnew_node.parm('booleanop').set(2)\nnew_node.parm('resolvea').set(False)\nnew_node.parm('resolveb').set(False)\nnew_node.parm('useaonlypieces').set(True)\nnew_node.parm('useabpieces').set(True)\n\n#radialmenu.runShelfTool(kwargs, 'sop_boolean::2.0')"]
+			],
+			"right",["script",
+				"label","Duplicate",
+				"icon","SOP_duplicate",
+				"script","radialmenu.runShelfTool(kwargs, 'geometry_duplicate')"
+			],
+			"top_right",["script",
+				"label","Part Mesh",
+				"icon","SOP_blast",
+				"script","radialmenu.runShelfTool(kwargs, 'hard_gun_part_mesh')"
+			]
+		],
+		"right",["submenu",
+			"label","Visibility",
+			"top",["script",
+				"label","Hide",
+				"icon","SOP_visibility",
+				"script","import soptoolutils\n\nsoptoolutils.genericTool(kwargs, 'visibility')"
+			],
+			"bottom",["script",
+				"label","Unhide",
+				"icon","SOP_visibility",
+				"script","import soptoolutils\nimport toolutils\n\nsel_nodes = hou.selectedNodes()\ncur_obj = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).pwd()\n\nif sel_nodes:\n    cur_node = sel_nodes[-1]\nelse:\n    cur_node = cur_obj.displayNode()\n\nnode = cur_node.createOutputNode(\"visibility\")\nnode.parm('action').set(1)\nnode.parm('group').set('')\n\n# make new connections for the merge node\nfor connects in cur_node.outputConnections():\n    out_node = connects.outputNode()\n    in_idx = connects.inputIndex()\n    out_idx = connects.outputIndex()\n\n    if out_node.name() != node.name():\n        out_node.setInput(out_idx, node, in_idx)\n        out_node.moveToGoodPosition()\n\nnode.moveToGoodPosition()\n\nif cur_node.name() == cur_obj.displayNode().name():\n    node.setDisplayFlag(True)\n    node.setRenderFlag(True)\n\nnode.setCurrent(True, clear_all_selected=True)"],
+			
+			"right",["script",
+				"label","Hide Non-Selected",
+				"icon","SOP_visibility",
+				"script","import soptoolutils\n\nnode = soptoolutils.genericTool(kwargs, 'visibility')  \nnode.parm('applyto').set(1)"
+			]
+		]
+	]
+]

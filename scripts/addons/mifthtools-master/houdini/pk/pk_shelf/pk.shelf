@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="pk_tools" label="PK">
+    <memberTool name="sc_camera"/>
+    <memberTool name="kn_cam"/>
+    <memberTool name="ImagePlane"/>
+  </toolshelf>
+
+  <tool name="sc_camera" label="SC Camera" icon="OBJ_camera">
+    <script scriptType="python"><![CDATA[obj = hou.node('/obj')
+cam = obj.createNode('cam', 'pk_cam')
+
+cam.parm('iconscale').set(20)
+cam.parm('resx').set(1000)
+cam.parm('resy').set(800)
+
+cam.parm('aspect').set(1)
+cam.parm('projection').set(1)
+
+cam.parm('focal').set(50)
+cam.parm('aperture').set(41.4214)
+cam.parm('orthowidth').set(29.328)
+cam.parm('near').set(0.01)
+cam.parm('far').set(2000)
+
+cam.parmTuple('t').set((38.7442, 31.9752, 37.9657))
+cam.parmTuple('r').set((-30, 45, 0))
+
+cam.moveToGoodPosition()]]></script>
+  </tool>
+
+  <tool name="ImagePlane" label="ImagePlane" icon="PLASMA_App">
+    <script scriptType="python"><![CDATA[image_path = hou.ui.selectFile(chooser_mode=hou.fileChooserMode.Read, title='Select Image', file_type=hou.fileType.Image, image_chooser=True)
+
+#hip_path = hou.getenv('HIP')
+
+if image_path:
+
+    obj = hou.node('/obj')
+    grid_obj = obj.createNode('geo', 'image_plane', run_init_scripts=False)
+    grid_obj.moveToGoodPosition()
+
+    grid_node = grid_obj.createNode('grid')
+    grid_node.parm('type').set(0)
+    grid_node.parm('surftype').set(4)
+    grid_node.parm('orient').set(0)
+    grid_node.parm('rows').set(2)
+    grid_node.parm('cols').set(2)
+    grid_node.moveToGoodPosition()
+
+    uv_n = grid_node.createOutputNode('uvunwrap')
+    uv_n.parm('spacing').set(0)
+    uv_n.parm('scale').set(2)
+    uv_n.moveToGoodPosition()
+
+    out_n = uv_n.createOutputNode('null')
+    out_n.setDisplayFlag(True)
+    out_n.setRenderFlag(True)
+    out_n.moveToGoodPosition()
+
+    shop_n = grid_obj.createNode('shopnet')
+    shop_n.moveToGoodPosition()
+
+    const_n = shop_n.createNode('vopmaterial')
+    const_n.moveToGoodPosition()
+
+    # create temp cop to get size of the image
+    gal = hou.galleries.galleryEntries('constant')[0]
+    gal.applyToNode(const_n)
+
+    cop_n = grid_obj.createNode('cop2net')
+    file_n = cop_n.createNode('file')
+    file_parms = list(file_n.parmTuple('filename').eval())
+    file_parms[0] = image_path
+    file_n.parmTuple('filename').set(file_parms)
+
+    # set grid size according to image size
+    grid_node.parmTuple('size').set((file_n.xRes() * 0.01, file_n.yRes() * 0.01))
+
+    # set material
+    const_n.parm('usePointColor').set(False)
+    const_n.parm('dif_map').set(image_path)
+    grid_obj.parm('shop_materialpath').set(const_n.path())
+
+    cop_n.destroy()]]></script>
+  </tool>
+
+  <tool name="kn_cam" label="KN Camera" icon="OBJ_camera">
+    <script scriptType="python"><![CDATA[obj = hou.node('/obj')
+cam = obj.createNode('cam', 'kn_cam')
+
+cam.parm('iconscale').set(20)
+cam.parm('resx').set(768)
+cam.parm('resy').set(768)
+
+cam.parm('aspect').set(1)
+cam.parm('projection').set(1)
+
+cam.parm('focal').set(50)
+cam.parm('aperture').set(41.4214)
+cam.parm('orthowidth').set(8.5)
+cam.parm('near').set(0.01)
+cam.parm('far').set(2000)
+
+cam.parmTuple('t').set((38.7442, 31.9752, 37.9657))
+cam.parmTuple('r').set((-30, 45, 0))
+
+cam.moveToGoodPosition()]]></script>
+  </tool>
+</shelfDocument>

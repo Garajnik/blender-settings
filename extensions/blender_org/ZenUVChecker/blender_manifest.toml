@@ -1,0 +1,26 @@
+schema_version = "1.0.0"
+
+id = "ZenUVChecker"
+version = "1.4.12"
+name = "Zen UV Checker"
+tagline = "Check the state of UVs on the model easily with Checker Textures"
+maintainer = "Zenmasters Team <tyapkin.art@gmail.com>"
+type = "add-on"
+
+website = "https://zenmastersteam.github.io/Zen-UV/latest/checker/"
+
+tags = ["UV"]
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+copyright = [
+  "2023 Valeriy Yatsenko",
+  "2023 Alex Zhornyak",
+]
+
+[permissions]
+files = "Access to folders for importing Checker Textures"
