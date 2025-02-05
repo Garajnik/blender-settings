@@ -306,14 +306,11 @@ class SimpleBake_OT_Refresh_Bake_Object_List(Operator):
 #highlight_on = False
 
 
+class SimpleBake_OT_Set_Highlight_Cols(Operator):
+    """Actually modify the object colours"""
 
-
-class SimpleBake_OT_Highlight_Bake_Objects(Operator):
-    """Highlight selected objects in the viewport"""
-
-    bl_idname = "simplebake.highlight_bake_objects"
-    bl_label = "Highlights bake objects in the viewport on this screen"
-
+    bl_idname = "simplebake.set_highlight_cols"
+    bl_label = "Set highlight cols to objects"
 
     @classmethod
     def update_object_list_from_selectd(cls):
@@ -323,25 +320,15 @@ class SimpleBake_OT_Highlight_Bake_Objects(Operator):
                 if sbp.objects_list_index !=i:
                     sbp.objects_list_index =i
 
-    @classmethod
-    def poll(cls, context):
-        sbp = context.scene.SimpleBake_Props
-        return not sbp.highlight_on
+    def execute(self, context):
 
-    @classmethod
-    def set_timer(cls):
-        bpy.app.timers.register(cls.col_bake_objects, first_interval=1.0)
-
-
-    @classmethod
-    def col_bake_objects(cls):
         sbp = bpy.context.scene.SimpleBake_Props
 
         #Do this anyway (EEVEE updates even if object selection changed)
-        cls.update_object_list_from_selectd()
+        __class__.update_object_list_from_selectd()
 
         if not sbp.highlight_on:
-            return None #Highlight turned off - end timer
+            return{'CANCELLED'} #Highlight turned off - end timer
 
         #Do nothing more if we aren't in shading mode
         any_shading = False
@@ -349,11 +336,8 @@ class SimpleBake_OT_Highlight_Bake_Objects(Operator):
             if space.shading.type == "SOLID":
                 any_shading = True
         if not any_shading:
-            return 0.2 #Do nothing. Check back later
-
-        #Can't have context as an argument if this is subject of a timer
-        sbp = bpy.context.scene.SimpleBake_Props
-        #bpy.ops.simplebake.refresh_bake_object_list()
+            return{'CANCELLED'}
+            #return 0.2 #Do nothing. Check back later
 
         def set_col(obj_names, col):
             for o_name in obj_names:
@@ -373,6 +357,32 @@ class SimpleBake_OT_Highlight_Bake_Objects(Operator):
         c = sbp.highlight_col
         set_col(bake_objs, (c.r, c.g, c.b, 1.0))
 
+        return{'FINISHED'}
+
+
+
+class SimpleBake_OT_Highlight_Bake_Objects(Operator):
+    """Highlight selected objects in the viewport"""
+
+    bl_idname = "simplebake.highlight_bake_objects"
+    bl_label = "Highlights bake objects in the viewport on this screen"
+
+
+    @classmethod
+    def poll(cls, context):
+        sbp = context.scene.SimpleBake_Props
+        return not sbp.highlight_on
+
+    @classmethod
+    def set_timer(cls):
+        bpy.app.timers.register(cls.col_bake_objects, first_interval=1.0)
+
+    @classmethod
+    def col_bake_objects(cls):
+        sbp = bpy.context.scene.SimpleBake_Props
+
+        bpy.ops.simplebake.set_highlight_cols()
+
         if not sbp.highlight_on:
             return None
         else:
@@ -383,8 +393,6 @@ class SimpleBake_OT_Highlight_Bake_Objects(Operator):
 
         for space in find_3d_viewport():
             space.shading.color_type = "OBJECT"
-
-
 
     def execute(self, context):
         sbp = context.scene.SimpleBake_Props
@@ -436,11 +444,11 @@ class SimpleBake_OT_Remove_Highlight(Operator):
 
     def execute(self, context):
         sbp = context.scene.SimpleBake_Props
+        sbp.highlight_on = False
 
         self.uncol_bake_objects(context)
         self.unset_display(context)
 
-        sbp.highlight_on = False
 
         return{'FINISHED'}
 
@@ -454,7 +462,8 @@ classes = ([
         SimpleBake_OT_Move_Bake_Object_List,
         SimpleBake_OT_Refresh_Bake_Object_List,
         SimpleBake_OT_Highlight_Bake_Objects,
-        SimpleBake_OT_Remove_Highlight
+        SimpleBake_OT_Remove_Highlight,
+        SimpleBake_OT_Set_Highlight_Cols
         
         ])
 

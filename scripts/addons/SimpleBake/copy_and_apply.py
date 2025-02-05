@@ -455,6 +455,37 @@ class SimpleBake_OT_Copy_And_Apply(Operator):
         return new_obj
 
 
+    def remove_unused_pbr(self,context,mat):
+
+        node_tree = mat.node_tree
+        nodes = node_tree.nodes
+
+        d_nodes_names = [n.name for n in nodes if n.bl_idname == "ShaderNodeDisplacement"]
+        nm_nodes_names = [n.name for n in nodes if n.bl_idname == "ShaderNodeNormalMap"]
+        gltf_node_names =[n.name for n in nodes if n.bl_idname == "ShaderNodeGroup" and n.label == "gltf"]
+
+        node_names = d_nodes_names + nm_nodes_names + gltf_node_names
+
+        for name in node_names:
+            if (n := nodes.get(name)):
+                unused = True
+                for i in n.inputs:
+                    if len(i.links)>0:
+                        unused = False
+                if unused:
+                    nodes.remove(n)
+
+        rr_nodes = [n.name for n in nodes if n.bl_idname == "NodeReroute"]
+
+        for name in rr_nodes:
+            if (n := nodes.get(name)):
+                unused = True
+                for o in n.outputs:
+                    if len(o.links)>0:
+                        unused = False
+                if unused:
+                    nodes.remove(n)
+
 
     def execute(self, context):
         sbp = context.scene.SimpleBake_Props
@@ -511,6 +542,10 @@ class SimpleBake_OT_Copy_And_Apply(Operator):
         #Hook up glTF node?
         if self.glTF:
             self.hook_up_glTF_node(context, mat)
+
+        #Make sure this happens after the GLTF node is corrected
+        if self.global_mode in [SBConstants.PBR, SBConstants.PBRS2A] or self.decals_override:
+            self.remove_unused_pbr(context, mat)
 
 
         # #If in background, save the Blend file on the way out

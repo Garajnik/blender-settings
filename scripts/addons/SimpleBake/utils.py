@@ -505,6 +505,8 @@ def is_blend_saved():
     else:
         return True
 
+conflicting_addons = []#"ZenUV"]
+
 classes = ([
     SimpleBake_OT_Show_Message_Box,
     #SimpleBake_OT_Print_Message,

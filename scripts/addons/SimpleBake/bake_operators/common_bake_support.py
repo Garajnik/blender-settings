@@ -32,6 +32,15 @@ from .. import __package__ as base_package
 class PrestartFailed(Exception):
     pass
 
+def re_enable_addons(context):
+    for addon in CommonBakePrepandFinish.disabled_addons:
+        try:
+            bpy.ops.preferences.addon_enable(module=addon)
+            print_message(context, f"Renabled addon {addon}")
+        except:
+            print_message(context, f"Error trying to renable addon {addon}")
+    CommonBakePrepandFinish.disabled_addons = []
+
 
 def common_prestart(context, decals=False, automatch=False):
 
@@ -41,6 +50,20 @@ def common_prestart(context, decals=False, automatch=False):
     pbr_bake = True if sbp.global_mode == "PBR" else False
 
     def prestart_actions():
+
+        #Disable other addons?
+        if prefs.disable_other_addons2 and sbp.bgbake!="bg":
+            p = context.preferences;
+            allowed_addons = ['io_anim_bvh', 'io_curve_svg', 'io_mesh_uv_layout', 'io_scene_fbx', 'io_scene_gltf2', 'cycles', 'pose_library', 'bl_pkg', 'SimpleBake'];
+            CommonBakePrepandFinish.disabled_addons = []
+            for addon in p.addons.keys():
+                if addon not in allowed_addons:
+                    try:
+                        bpy.ops.preferences.addon_disable(module=addon)
+                        CommonBakePrepandFinish.disabled_addons.append(addon)
+                        print_message(context, f"Disabled {addon}")
+                    except:
+                        print_message(context, f"Error while disabling {addon}")
 
         Bip.was_error = False
 
@@ -116,6 +139,9 @@ def common_prestart(context, decals=False, automatch=False):
         bpy.ops.simplebake.material_backup(mode="working_restore")
         bpy.ops.simplebake.material_backup(mode="master_restore")
         bpy.ops.simplebake.reverse_geo_nodes_sidestep()
+
+        #Re-enable addons we might have disabled
+        re_enable_addons(context)
 
         return False
 
@@ -305,6 +331,7 @@ class SimpleBake_OT_Compositor_Denoise(Operator):
             s.render.image_settings.file_format = img.file_format
             s.render.image_settings.color_depth = img["SB_bit_depth"]
             s.render.image_settings.color_mode = img["SB_channels"]
+            s.render.image_settings.exr_codec = img["SB_exr_codec"]
             #s.view_settings.view_transform = img["SB_view_transform"]
             s.view_settings.view_transform = "Standard"
 
@@ -339,7 +366,7 @@ class SimpleBake_OT_Compositor_Denoise(Operator):
 
             #All tiles done for this image, reload the UDIM image
             img.reload() #We've updated 1 or more tiles and Blender still has them in the buffer'
-            img.save()
+            #img.save()
             img["SB_denoised"] = True
 
             #transfer_tags(img, new_img)
@@ -468,6 +495,12 @@ class CommonBakePrepandFinish:
     start_time = None
 
     high_low_matching_list = {}
+
+    #Disabled addons
+    disabled_addons = []
+
+    #Disabled handlers
+    disabled_handlers = []
     
     
 
@@ -583,6 +616,12 @@ class SimpleBake_OT_Common_Bake_Prep(Operator):
         CommonBakePrepandFinish.start_time = datetime.now()
         
         sbp = context.scene.SimpleBake_Props
+
+        #Suspend despgraph access for all other addons, as access during bake process will cause Blender crash
+        CommonBakePrepandFinish.disabled_handlers = list(bpy.app.handlers.depsgraph_update_post)
+        bpy.app.handlers.depsgraph_update_post.clear()
+        handler_names = [h.__name__ for h in CommonBakePrepandFinish.disabled_handlers]
+        print_message(context, f"Just disabled handlers: {handler_names}")
 
         #Disable autosmooth for all objects that are relevant to us and have custom normals
         prefs = context.preferences.addons[base_package].preferences
@@ -883,6 +922,20 @@ class SimpleBake_OT_Common_Bake_Finishing(Operator):
 
         #Reverse any sidestepping of geo nodes objects
         bpy.ops.simplebake.reverse_geo_nodes_sidestep()
+
+        #Renable any addons we disabled
+        if not self.in_background:
+            re_enable_addons(context)
+
+        #Restore any handlers that we disabled
+        for h in CommonBakePrepandFinish.disabled_handlers:
+            try:
+                bpy.app.handlers.depsgraph_update_post.append(h)
+                print_message(context,f"Restored handler {h.__name__}")
+            except:
+                print_message(context,f"Failed to restore handler {h.__name__}")
+
+
 
 
         return {'FINISHED'}

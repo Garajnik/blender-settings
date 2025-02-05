@@ -128,8 +128,11 @@ bpy.ops.preferences.addon_enable(module='SimpleBake');
 allowed_addons = ['io_anim_bvh', 'io_curve_svg', 'io_mesh_uv_layout', 'io_scene_fbx', 'io_scene_gltf2', 'cycles', 'pose_library', 'bl_pkg', 'SimpleBake'];
 for addon in prefs.addons.keys():
     if addon not in allowed_addons:
-        bpy.ops.preferences.addon_disable(module=addon)
-        print(f"Disabled " + addon)
+        try:
+            bpy.ops.preferences.addon_disable(module=addon)
+            print(f"Disabled " + addon)
+        except:
+            print(f"Error when disabling addon " + addon)
 orig_file_path = bpy.data.filepath;
 savepath=str(Path('{tmp_dir_path}') / (str(os.getpid()) + '.blend'));
 bpy.ops.wm.save_as_mainfile(filepath=str(savepath), check_existing=False);
@@ -203,7 +206,8 @@ class SimpleBake_OT_Import_BGBake(Operator):
         
         sbc = bpy.data.collections["SimpleBake_Bakes_Background"]
         sbc.name = "SimpleBake_Bakes"
-        
+
+
         #Relocate, as append leaves it in a funny place
         context.scene.collection.children.link(sbc)
         del_list =[]
@@ -216,33 +220,33 @@ class SimpleBake_OT_Import_BGBake(Operator):
             c = bpy.data.collections.get(name)
             if c!=None:
                 bpy.data.collections.remove(c)
-        
+
         #If we didn't want the copied and applied object
         if not bgt.copy_and_apply:
             #Delete the objects, and then collection
             for obj in sbc.objects:
                 bpy.data.objects.remove(obj)
             bpy.data.collections.remove(sbc)
-        
+
         a_img_names = [i.name for i in bpy.data.images]
         a_obj_names = [o.name for o in context.scene.objects]
-        
+
         message = []
         message.append(f"Imported - {len(a_img_names) - len(b_img_names)} images")
         message.append(f"Imported - {len(a_obj_names) - len(b_obj_names)} objects")
-        
+
         #Deal with duplicates - This is hacky and not perfect
         for name in b_img_names:
             if name + ".002" in a_img_names:
                 bpy.data.images.remove(bpy.data.images[name])
                 bpy.data.images[name + ".002"].name = name
-            
+
             elif name + ".001" in a_img_names:
                 bpy.data.images.remove(bpy.data.images[name])
                 bpy.data.images[name + ".001"].name = name
-        
+
         BackgroundBakeTasks.completed_tasks.remove(bgt)
-        
+
         #Hide source and/or cage object if requested
         for obj in context.scene.objects:
             if "SB_BG_HIDE" in obj:
@@ -252,8 +256,8 @@ class SimpleBake_OT_Import_BGBake(Operator):
 
 
         show_message_box(context, message, "Import complete", icon = 'INFO')
-        
         return{'FINISHED'}
+
     
 class SimpleBake_OT_Delete_Queued_BGBake(Operator):
     """Delete a queued background bake"""

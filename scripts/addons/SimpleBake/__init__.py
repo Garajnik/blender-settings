@@ -1,7 +1,7 @@
 bl_info = {
     "name": "SimpleBake",
     "author": "Lewis <www.toohey.co.uk/SimpleBake/support/>",
-    "version": (1, 7, 0),
+    "version": (1, 8, 3),
     "blender": (4, 2, 1),
     "location": "Properties Panel -> Render Settings Tab",
     "description": "Simple baking of PBR and other textures",

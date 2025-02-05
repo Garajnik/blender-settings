@@ -1191,9 +1191,12 @@ class SimpleBake_OT_Sidestep_Geo_Nodes(Operator):
             #for mod in geo_modifiers:
             for mod in new_obj.modifiers:
                 try:
-                    # Try to apply the modifier
-                    bpy.context.view_layer.objects.active = new_obj
-                    bpy.ops.object.modifier_apply(modifier=mod.name)
+                    if mod.show_render:
+                        # Try to apply the modifier
+                        bpy.context.view_layer.objects.active = new_obj
+                        bpy.ops.object.modifier_apply(modifier=mod.name)
+                    else:
+                        new_obj.modifiers.remove(mod)
                 except Exception as e:
                     # Remove the modifier if application fails
                     new_obj.modifiers.remove(mod)

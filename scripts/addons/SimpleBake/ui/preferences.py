@@ -52,6 +52,8 @@ class SimpleBake_Preferences(AddonPreferences):
     clearcoatrough_cs: EnumProperty(name="", items=get_cs_list, default=16)
     emission_alias: StringProperty(name=SBConstants.PBR_EMISSION, default=SBConstants.PBR_EMISSION)
     emission_cs: EnumProperty(name="", items=get_cs_list, default=19)
+    emission_strength_alias: StringProperty(name=SBConstants.PBR_EMISSION_STRENGTH, default=SBConstants.PBR_EMISSION_STRENGTH)
+    emission_strength_cs: EnumProperty(name="", items=get_cs_list, default=16)
     specular_alias: StringProperty(name=SBConstants.PBR_SPECULAR, default=SBConstants.PBR_SPECULAR)
     specular_cs: EnumProperty(name="", items=get_cs_list, default=16)
     alpha_alias: StringProperty(name=SBConstants.PBR_ALPHA, default=SBConstants.PBR_ALPHA)    
@@ -122,6 +124,15 @@ class SimpleBake_Preferences(AddonPreferences):
         default=True,
         description="Save blend file prior to any baking operation"
         )
+    disable_other_addons2: BoolProperty(
+        default=False,
+        description="Disable other addons when baking to prevent conflicts"
+        )
+    check_for_conflicting_addons: BoolProperty(
+        default=True,
+        description="Check for addons known to conflict with SimpleBake and prevent bake"
+        )
+
     
     @classmethod
     def reset_img_string(cls, context):
@@ -142,6 +153,7 @@ class SimpleBake_Preferences(AddonPreferences):
         prefs.property_unset("clearcoat_alias")  
         prefs.property_unset("clearcoatrough_alias")  
         prefs.property_unset("emission_alias")
+        prefs.property_unset("emission_strength_alias")
         prefs.property_unset("specular_alias")  
         prefs.property_unset("alpha_alias")
         prefs.property_unset("bump_alias")
@@ -164,6 +176,7 @@ class SimpleBake_Preferences(AddonPreferences):
         prefs.property_unset("clearcoat_cs")  
         prefs.property_unset("clearcoatrough_cs")  
         prefs.property_unset("emission_cs")
+        prefs.property_unset("emission_strength_cs")
         prefs.property_unset("specular_cs")  
         prefs.property_unset("alpha_cs")
         prefs.property_unset("bump_cs")
@@ -191,6 +204,7 @@ class SimpleBake_Preferences(AddonPreferences):
         alias_dict[SBConstants.PBR_CLEARCOAT] = clean_file_name(self.clearcoat_alias)
         alias_dict[SBConstants.PBR_CLEARCOAT_ROUGH] = clean_file_name(self.clearcoatrough_alias)
         alias_dict[SBConstants.PBR_EMISSION] = clean_file_name(self.emission_alias)
+        alias_dict[SBConstants.PBR_EMISSION_STRENGTH] = clean_file_name(self.emission_strength_alias)
         alias_dict[SBConstants.PBR_SPECULAR] = clean_file_name(self.specular_alias)
         alias_dict[SBConstants.PBR_ALPHA] = clean_file_name(self.alpha_alias)
         alias_dict[SBConstants.PBR_SSS] = clean_file_name(self.sss_alias)
@@ -218,6 +232,7 @@ class SimpleBake_Preferences(AddonPreferences):
         cs_dict[SBConstants.PBR_CLEARCOAT] = self.clearcoat_cs
         cs_dict[SBConstants.PBR_CLEARCOAT_ROUGH] = self.clearcoatrough_cs
         cs_dict[SBConstants.PBR_EMISSION] = self.emission_cs
+        cs_dict[SBConstants.PBR_EMISSION_STRENGTH] = self.emission_strength_cs
         cs_dict[SBConstants.PBR_SPECULAR] = self.specular_cs
         cs_dict[SBConstants.PBR_ALPHA] = self.alpha_cs
         cs_dict[SBConstants.PBR_SSS] = self.sss_cs
@@ -382,6 +397,13 @@ class SimpleBake_Preferences(AddonPreferences):
 
         row = box.row()
         col = row.column()
+        col.prop(self, "emission_strength_alias")
+        col = row.column()
+        col.alignment = 'RIGHT'
+        col.prop(self, "emission_strength_cs")
+
+        row = box.row()
+        col = row.column()
         col.prop(self, "specular_alias") 
         col = row.column()
         col.alignment = 'RIGHT'
@@ -488,8 +510,11 @@ class SimpleBake_Preferences(AddonPreferences):
         row = box.row()
         row.prop(self, "pbr_sample_count", text="Override PBR sample count")
         row = box.row()
+        row.prop(self, "disable_other_addons2", text="DEBUG: Disable other addons on bake")
+        row = box.row()
+        row.prop(self, "check_for_conflicting_addons", text="Check for conflicting addons")
 
-
+        row = box.row()
         row = box.row()
         row.alert = True
         row.scale_y = 0.5

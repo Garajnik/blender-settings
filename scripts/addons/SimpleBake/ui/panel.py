@@ -4,7 +4,7 @@ from pathlib import Path
 from bpy.utils import register_class, unregister_class
 from bpy.types import Panel, Operator
 
-from ..utils import SBConstants, pbr_selections_to_list, specials_selection_to_list, is_blend_saved, get_udim_tiles
+from ..utils import SBConstants, pbr_selections_to_list, specials_selection_to_list, is_blend_saved, get_udim_tiles, conflicting_addons
 from .objects_list import SIMPLEBAKE_UL_Objects_List
 from .channel_packing_list import SIMPLEBAKE_UL_CPTexList
 from ..background_and_progress import BackgroundBakeTasks, BakeInProgress
@@ -1755,6 +1755,41 @@ class SIMPLEBAKE_PT_main_panel(Panel):
         row.prop(sbp, "bgbake", expand=True)
         
         row = box.row(align=ALIGN)
+
+        prefs = context.preferences.addons[base_package].preferences
+        if prefs.check_for_conflicting_addons and not prefs.disable_other_addons2:
+            enabled_addons = [addon.module for addon in bpy.context.preferences.addons]
+            for ea in enabled_addons:
+                for ca in conflicting_addons:
+                    if ca in ea:
+                        row=box.row(align=ALIGN)
+                        row.scale_y = 0.5
+                        row.alignment = 'CENTER'
+                        row.alert=True
+                        row.label(text="CANNOT PROCEED TO BAKE", icon="ERROR")
+                        row=box.row(align=ALIGN)
+                        row.scale_y = 0.5
+                        row.alignment = 'CENTER'
+                        row.alert=True
+                        row.label(text=f"Addon '{ea}'")
+                        row=box.row(align=ALIGN)
+                        row.scale_y = 0.5
+                        row.alignment = 'CENTER'
+                        row.alert=True
+                        row.label(text=f"conflicts with SimpleBake")
+                        row=box.row(align=ALIGN)
+                        row.scale_y = 0.5
+                        row.alignment = 'CENTER'
+                        row.alert=True
+                        row.label(text=f"and will cause Blender to crash!")
+                        row=box.row(align=ALIGN)
+                        row.scale_y = 0.5
+                        row.alignment = 'CENTER'
+                        row.alert=True
+                        row.label(text=f"Disable {ea} first")
+
+                        return False
+
 
         disable_if_is = False
         disable_if_udims = False

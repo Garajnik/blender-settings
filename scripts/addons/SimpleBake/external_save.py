@@ -167,7 +167,8 @@ class SimpleBake_OT_Save_Images_Externally(Operator):
             print_message(context, f"Save path: {str(save_path)}")
             
             #Save image
-            img.save_render(str(save_path), scene=s)
+            #Let's try this
+            img.save_render(str(save_path).encode('utf-8').decode('utf-8'), scene=s)
             
             #Store full path. We may need it later on. About to update to relative path
             full_save_path = str(save_path)#.replace("<UDIM>","1001")
@@ -177,6 +178,7 @@ class SimpleBake_OT_Save_Images_Externally(Operator):
             img["SB_bit_depth"] = s.render.image_settings.color_depth
             img["SB_channels"] = s.render.image_settings.color_mode
             img["SB_view_transform"] = s.view_settings.view_transform
+            img["SB_exr_codec"] = s.render.image_settings.exr_codec
             
             #Some changes needed for UDIM images
             img.source = "TILED" if len(img.tiles)>1 else "FILE"
@@ -330,13 +332,14 @@ class SimpleBake_OT_Save_Objects_Externally(Operator):
 
 
         def do_export(filepath):
+
             if preset_name != "None":
                 print_message(context, f"Using {sbp.export_format} preset values - {preset_name}")
-                kwargs["filepath"] = str(filepath)
+                kwargs["filepath"] = str(filepath).encode('utf-8').decode('utf-8')
                 kwargs["use_selection"] = True
                 operator(**kwargs)
             else:
-                myargs["filepath"] = str(filepath)
+                myargs["filepath"] = str(filepath).encode('utf-8').decode('utf-8')
                 operator(**myargs)
 
         #Not merged bake, sub-folder, combined mesh
