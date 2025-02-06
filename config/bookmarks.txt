@@ -5,6 +5,7 @@ D:\Saves\
 G:\Unity-Projects\MyNameIsUter\
 [Recent]
 D:\Saves\3D\
+D:\Saves\Blender PowerSave\
 C:\Users\Leonid\Downloads\
 D:\Work\Models For Fun\Blender365\
 D:\Saves\3D\HDRIs\
@@ -13,4 +14,3 @@ D:\Work\Models For Fun\GreenLamp\
 D:\Work\Models For Fun\GreenLamp\textures\
 D:\Work\Progging For Fun\Python\
 C:\Users\Leonid\Downloads\BakeTest (Deletable)\
-D:\Work\Models For Fun\GreenLamp\old-table\source\old_table\fbx\

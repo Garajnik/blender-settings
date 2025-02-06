@@ -23,3 +23,5 @@ Generate ▸ Array
  F Plane.017_Bake1_PBR StoA_Displacement
  F Plane.017_Bake1_PBR_Ambient Occlusion
  F Plane.017_Bake1_PBR_Curvature
+Add (Shift A) ▸ Mesh ▸ Retopology at Active
+retopoflow.newtarget_active ▸RF: New target at Active
