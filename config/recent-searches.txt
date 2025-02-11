@@ -15,7 +15,6 @@ Input ▸ Geometry
 Texture ▸ Noise Texture
 Converter ▸ Math
 Texture ▸ Gradient Texture
-Converter ▸ Color Ramp
 Generate ▸ Array
  F Plane_Bake1_CyclesBake_COMBINED
  F Plane.017_Bake1_PBR StoA_Diffuse
@@ -25,3 +24,4 @@ Generate ▸ Array
  F Plane.017_Bake1_PBR_Curvature
 Add (Shift A) ▸ Mesh ▸ Retopology at Active
 retopoflow.newtarget_active ▸RF: New target at Active
+Converter ▸ Color Ramp
