@@ -1,3 +1,4 @@
+E:\UnityProjects\MyNameIsUter\Assets\Assets\Characters\Uter\Uter.blend
 C:\Users\Leonid\AppData\Roaming\Blender Foundation\Blender\4.3\scripts\presets\zen_uv\demo_examples\Emergency Light\ZenUV_Light_04.blend
 D:\Work\Models For Fun\AC\AC_with_ekran.blend
 D:\Work\Models For Fun\GreenLamp\GreenLamp.blend
@@ -17,4 +18,3 @@ G:\Unity-Projects\MyNameIsUter\Assets\Characters\Uter\Uter.blend
 G:\Unity-Projects\MyNameIsUter\Assets\Scenes\Location_1 (House)\Location_1 (House).blend
 G:\Unity-Projects\MyNameIsUter\Assets\Scenes\Location_3 (Station)\Location_3 (Art Blockout).blend
 G:\Unity-Projects\MyNameIsUter\Assets\Scenes\Location_3 (Station)\Models\RoadBarrier\RoadBarrier.blend
-G:\Unreal-Projects\Playground\Content\Scenes\MNIU_Location_3_Station\Location_3 (Art Blockout).blend
